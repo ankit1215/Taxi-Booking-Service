@@ -14,6 +14,8 @@ import com.tripzy.reposiory.CustomerRepository;
 import com.tripzy.reposiory.DriverRepository;
 import com.tripzy.transformer.BookingTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,6 +34,9 @@ public class BookingService {
 
     @Autowired
     BookingRepository bookingRepository;
+
+    @Autowired
+    JavaMailSender javaMailSender;
 
     public BookingResponse bookCab(BookingRequest bookingRequest, int customerId) {
         Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
@@ -55,8 +60,23 @@ public class BookingService {
         Customer savedCustomer = customerRepository.save(customer);
         Driver savedDriver = driverRepository.save(driver);
 
+        sendEmail(savedCustomer);
+
         return BookingTransformer.bookingToBookingResponse(savedBooking, savedCustomer, availableCab, savedDriver);
 
 
+    }
+
+    private void sendEmail(Customer customer){
+
+        String text = "Congrats!! " + customer.getName() + "Your cab has been booked!";
+
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setFrom("ankut.acciojob@gmail.com");
+        simpleMailMessage.setTo(customer.getEmailId());
+        simpleMailMessage.setSubject("Cab Booked !!");
+        simpleMailMessage.setText(text);
+
+        javaMailSender.send(simpleMailMessage);
     }
 }
