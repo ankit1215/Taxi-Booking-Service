@@ -1,7 +1,6 @@
-package com.tripzy.model;
+package com.tripzy.dto.response;
 
 import com.tripzy.Enum.TripStatus;
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,13 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity
 @Builder
-public class Booking {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookingId;
+public class BookingResponse {
 
     private String pickup;
 
@@ -26,14 +20,15 @@ public class Booking {
 
     private double tripDistanceInKm;
 
-    @Enumerated(EnumType.STRING)
     private TripStatus tripStatus;
 
     private double billAmount;
 
-    @CreationTimestamp
     private Date bookedAt;
 
-    @UpdateTimestamp
     private Date lastUpdateAt;
+
+    private CustomerResponse customer;
+
+    private CabResponse cab;
 }
